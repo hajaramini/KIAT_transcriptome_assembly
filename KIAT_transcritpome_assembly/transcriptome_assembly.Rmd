@@ -7,7 +7,7 @@ output:
     keep_md: yes
 ---
 
-download data & trimming 
+* download data & trimming 
 ```{r}
 # 1) download raw fastq data using wget 
 
@@ -74,12 +74,12 @@ download data & trimming
 # blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out 
 ```
 
-structure annotation (possible tool: PASA)
+* structure annotation (possible tool: PASA)
 ```{r}
 
 ```
 
-functional annotation (possible tool: Blast2GO)
+* functional annotation (possible tool: Blast2GO)
 ```{r}
 
 ```
