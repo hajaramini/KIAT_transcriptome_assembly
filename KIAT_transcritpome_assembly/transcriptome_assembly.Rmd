@@ -65,13 +65,14 @@ output:
 
 # 8) remove redundant isoforms from novel transcripts using CAP3 
 # https://github.com/leejimmy93/KIAT_whitney/blob/master/parent_RNA_transcriptome/run_cap3.sh
+# merge contigs & singletons for downstream analysis 
 
 # 9) predict ORF from non-redundant transcript dataset using transdecoder 
 # TransDecoder.LongOrfs -t Ae.u.fa 
 # TransDecoder.LongOrfs -t Ol.u.fa 
 
 # 10) blastp against nr protein database to get an idea of what genes they are 
-# blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out 
+# blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out  
 ```
 
 * structure annotation (possible tool: PASA)
