@@ -72,8 +72,24 @@ output:
 # TransDecoder.LongOrfs -t Ae.u.fa.cap.contigs_singlets 
 # TransDecoder.LongOrfs -t Ol.u.fa.cap.contigs_singlets 
 
-# 10) blastp against nr protein database to get an idea of what genes they are 
+# blastp against nr protein database to get an idea of what genes they are 
 # blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out  
+
+# 10) multiple ORF were produced for each transcript, the number of transcripts with ORF identified are: 
+# Da-Ae (2311) & Da-Ol-1 (2427) : cat longest_orfs.pep | grep ">" | sed 's/:/\t/g' | awk '{print $2}' | sort | uniq | wc -l 
+
+# To do: 
+# ...11) among the multiple ORFs, which one to use for annotation? Upendra decided to use the one with the max number of significant hits to NCBI nr database. 
+
+# ...12) map transctipts to B.napus genome sequence using BWA-MEM, mapped transcripts VS unmapped transcritps (because these transcritps were assembled from mapped reads, they should still be able to map back the reference genome)
+
+# ...13) convert mapped transcripts (bam/sam format) to bed file using (bamtobed tool)
+
+# ...14) join multiple exons from each transcript in the bed file (custom script)
+
+# ...15) select the best isoform for each transcript based on length, the longest will be retained. (custom script)
+
+# ...16) get fasta file corresponding to the annotation bed file using getfasta utility from BED tools 
 ```
 
 * structure annotation (possible tool: PASA)
