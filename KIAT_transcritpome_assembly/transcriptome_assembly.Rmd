@@ -61,7 +61,8 @@ output:
 # cuffcompare 
 
 # https://github.com/leejimmy93/KIAT_whitney/blob/master/parent_RNA_transcriptome/run_cuffcompare_Ae.sh
-# https://github.com/leejimmy93/KIAT_whitney/blob/master/parent_RNA_transcriptome/run_cuffcompare_Ol.sh 
+# https://github.com/leejimmy93/KIAT_whitney/blob/master/parent_RNA_transcriptome/run_cuffcompare_Ol.sh
+# get contigs with "u" code, need to remember how I get to here. 
 
 # 8) remove redundant isoforms from novel transcripts using CAP3 
 # https://github.com/leejimmy93/KIAT_whitney/blob/master/parent_RNA_transcriptome/run_cap3.sh
@@ -77,6 +78,11 @@ output:
 
 * structure annotation (possible tool: PASA)
 ```{r}
+# install & configure PASA 
+# wget https://github.com/PASApipeline/PASApipeline/archive/v2.1.0.tar.gz
+# tar -xvzf v2.1.0.tar.gz
+# go to https://dev.mysql.com/downloads/file/?id=469277 
+# dpkg -i mysql-community-client_5.7.18-1ubuntu16.10_amd64.deb "error" 
 
 ```
 
