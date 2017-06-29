@@ -100,6 +100,9 @@ output:
 # go to https://dev.mysql.com/downloads/file/?id=469277 
 # dpkg -i mysql-community-client_5.7.18-1ubuntu16.10_amd64.deb "error" 
 
+# PASA pipeline  
+#1) seqclean to identify transcript with polyAtail 
+# ... 
 ```
 
 * functional annotation (possible tool: Blast2GO)
