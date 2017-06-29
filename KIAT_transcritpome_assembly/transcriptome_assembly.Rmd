@@ -69,8 +69,8 @@ output:
 # merge contigs & singletons for downstream analysis 
 
 # 9) predict ORF from non-redundant transcript dataset using transdecoder 
-# TransDecoder.LongOrfs -t Ae.u.fa 
-# TransDecoder.LongOrfs -t Ol.u.fa 
+# TransDecoder.LongOrfs -t Ae.u.fa.cap.contigs_singlets 
+# TransDecoder.LongOrfs -t Ol.u.fa.cap.contigs_singlets 
 
 # 10) blastp against nr protein database to get an idea of what genes they are 
 # blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out  
