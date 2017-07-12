@@ -190,7 +190,7 @@ output:
 # ... 
 ```
 
-* functional annotation (possible tool: Blast2GO)
+* functional annotation (possible tool: Blast2GO, interproscan)
 ```{r}
 
 ```
