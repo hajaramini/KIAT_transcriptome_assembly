@@ -71,118 +71,11 @@ output:
 # TransDecoder.LongOrfs -t Ae.u.fa.cap.contigs_singlets 
 # TransDecoder.LongOrfs -t Ol.u.fa.cap.contigs_singlets 
 
-<<<<<<< HEAD
 # blastp against nr protein database to get an idea of what genes they are 
 # blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out  
 
 # 10) multiple ORF were produced for each transcript, the number of transcripts with ORF identified are: 
 # Da-Ae (2311) & Da-Ol-1 (2427) : cat longest_orfs.pep | grep ">" | sed 's/:/\t/g' | awk '{print $2}' | sort | uniq | wc -l 
-
-# To do: 
-# ...11) among the multiple ORFs, which one to use for annotation? Upendra decided to use the one with the max number of significant hits to NCBI nr database. 
-
-# ...12) map transctipts to B.napus genome sequence using BWA-MEM, mapped transcripts VS unmapped transcritps (because these transcritps were assembled from mapped reads, they should still be able to map back the reference genome)
-
-# ...13) convert mapped transcripts (bam/sam format) to bed file using (bamtobed tool)
-
-# ...14) join multiple exons from each transcript in the bed file (custom script)
-
-# ...15) select the best isoform for each transcript based on length, the longest will be retained. (custom script)
-
-# ...16) get fasta file corresponding to the annotation bed file using getfasta utility from BED tools 
-```
-
-<<<<<<< HEAD
-* Structure Annotation (possible tool: MAKERv2.31.9)
-```{r}
-# 1) Install and Configure MAKER
-# wget http://yandell.topaz.genetics.utah.edu/cgi-bin/maker_license.cgi
-
-# 2) Easy Installation
-# tar -xvzf maker-2.31.9.tgz
-# In ~/bin/maker/src
-# perl Build.PL
-# ./Build install
-# ./Build installdeps (for missing PERL dependencies, requires root permission)
-# ./Build installexes (for missing external programs, requires root permission)
-
-# 3) Separate Directories (for Geno)
-# In ~/bin/maker
-# mkdir maker.ae
-# mkdir maker.ol
-
-# 4) Creating ctl Files
-# maker -CTL 
-# creates three control files (run this once in maker.ae and maker.ol)
-# Edit with Nano (is there a way to automate this?)
-# maker_exe.ctl contains path information for executables
-# maker_bopts.ctl contains filtering stats for BLAST/Exonerate
-# maker_opts.ctl contains location of input genome file
-
-# 5) Configuring ctl Files
-# Ae Genotype
-# maker_exe.ctl 
-
-# maker_bopts.ctl 
-
-# maker_opts.ctl 
-# genome=../../../../ruijuanli/Reference/B.napus/Brassica_napus_v4.1.chromosomes.fa #genome sequence (fasta file or fasta embedded in GFF3 file)
-# est=../../../../ruijuanli/assembly_parent/cap3/Ae.u.fa.cap.contigs_singlets
-# protein= #prot seq fasta (multiple organisms?)
-# protein_gff= #aligned prot homology from external GFF3
-
-# Ol Genotype
-# maker_exe.ctl
-
-# maker_bopts.ctl
-
-# maker_opts.ctl
-# genome= ../../../../ruijuanli/Reference/B.napus/Brassica_napus_v4.1.chromosomes.fa #genome sequence (fasta file or fasta embedded in GFF3 file)
-# est=../../../../ruijuanli/assembly_parent/cap3/Ol.u.fa.cap.contigs_singlets
-# protein= #prot seq fasta (multiple organisms?)
-# protein_gff= #aligned prot homology from external GFF3
-
-# Command: maker -RM_off|R
-# Argument: -RM_off|R turns off all repeat masking options
-# Argument: -fix_nucleotides not recognized
-
-
-
-# [Detailed Installation Notes]
-
-# Install and Configure Perl
-# perl -v to confirm perl is installed (5.8.0+ required)
-
-# perl -MCPAN -e shell to access CPAN shell
-# installing modules (may require sudo)
-# PERMISSION ISSUES HERE
-# install DBI
-# install DBD::SQLite
-# install Proc::ProcessTable
-# install threads
-# install IO::All
-# install IO::Prompt
-# install File::Which
-# install Perl::Unsafe::Signals
-# install Bit::Vector
-# install Inline::C
-# install PerlIO::gzip
-
-# Installing Bioperl with CPAN
-# perl -MCPAN -e shell
-# install Bundle::CPAN
-# install Module::Build
-# install Bundle::BioPerl
-
-# Installing NCBI-BLAST (Wublast alternative if we have existing copy (no longer freely available))
-# Present in server
-```
-
-
-* structure annotation (possible tool: PASA)
-=======
-# 10) blastp against nr protein database to get an idea of what genes they are 
-# blastp -query longest_orfs.pep  -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr  -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 6 -out ${i}_nr.out 
 
 # 11) the number of novel genes which can be annotated 
 # cat longest_orfs.pep | grep ">" | sed 's/:/\t/g' | awk '{print $2}' | sort | uniq | wc -l
@@ -193,12 +86,16 @@ output:
 
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/assembly_parent/transdecoder/after_cap3/Ol.u.fa.cap.contigs_singlets.transdecoder_dir/for_annotation_ID Ol.u.fa.cap.contigs_singlets > Ol_ref_for_annotation.fa  
 
+# /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/assembly_parent/reference_based_for_annotation/Ae_ref_for_annotation_final.fa  & 
+# /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/assembly_parent/reference_based_for_annotation/Ol_ref_for_annotation.fa 
+
 
 ```
 
-#### de-novo based 
->>>>>>> Calen
+
+# From Calen 
 ```{r}
+#### de-novo based 
 # 1) trim each lib 
 
 # 2) combine trimmed data for Da-Ae & Da-Ol-1 

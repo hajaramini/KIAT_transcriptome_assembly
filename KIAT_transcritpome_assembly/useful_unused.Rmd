@@ -1,0 +1,111 @@
+---
+title: "useful_but_unused"
+author: "Ruijuan Li"
+date: "12/7/2017"
+output: html_document
+---
+
+### if follow Upendra's idea from his G3 paper 
+```{r}
+# To do: 
+# ...11) among the multiple ORFs, which one to use for annotation? Upendra decided to use the one with the max number of significant hits to NCBI nr database. 
+
+# ...12) map transctipts to B.napus genome sequence using BWA-MEM, mapped transcripts VS unmapped transcritps (because these transcritps were assembled from mapped reads, they should still be able to map back the reference genome)
+
+# ...13) convert mapped transcripts (bam/sam format) to bed file using (bamtobed tool)
+
+# ...14) join multiple exons from each transcript in the bed file (custom script)
+
+# ...15) select the best isoform for each transcript based on length, the longest will be retained. (custom script)
+
+# ...16) get fasta file corresponding to the annotation bed file using getfasta utility from BED tools 
+``` 
+
+* Structure Annotation (possible tool: MAKERv2.31.9) From Calen 
+```{r}
+# 1) Install and Configure MAKER
+# wget http://yandell.topaz.genetics.utah.edu/cgi-bin/maker_license.cgi
+
+# 2) Easy Installation
+# tar -xvzf maker-2.31.9.tgz
+# In ~/bin/maker/src
+# perl Build.PL
+# ./Build install
+# ./Build installdeps (for missing PERL dependencies, requires root permission)
+# ./Build installexes (for missing external programs, requires root permission)
+
+# 3) Separate Directories (for Geno)
+# In ~/bin/maker
+# mkdir maker.ae
+# mkdir maker.ol
+
+# 4) Creating ctl Files
+# maker -CTL 
+# creates three control files (run this once in maker.ae and maker.ol)
+# Edit with Nano (is there a way to automate this?)
+# maker_exe.ctl contains path information for executables
+# maker_bopts.ctl contains filtering stats for BLAST/Exonerate
+# maker_opts.ctl contains location of input genome file
+
+# 5) Configuring ctl Files
+# Ae Genotype
+# maker_exe.ctl 
+
+# maker_bopts.ctl 
+
+# maker_opts.ctl 
+# genome=../../../../ruijuanli/Reference/B.napus/Brassica_napus_v4.1.chromosomes.fa #genome sequence (fasta file or fasta embedded in GFF3 file)
+# est=../../../../ruijuanli/assembly_parent/cap3/Ae.u.fa.cap.contigs_singlets
+# protein= #prot seq fasta (multiple organisms?)
+# protein_gff= #aligned prot homology from external GFF3
+
+# Ol Genotype
+# maker_exe.ctl
+
+# maker_bopts.ctl
+
+# maker_opts.ctl
+# genome= ../../../../ruijuanli/Reference/B.napus/Brassica_napus_v4.1.chromosomes.fa #genome sequence (fasta file or fasta embedded in GFF3 file)
+# est=../../../../ruijuanli/assembly_parent/cap3/Ol.u.fa.cap.contigs_singlets
+# protein= #prot seq fasta (multiple organisms?)
+# protein_gff= #aligned prot homology from external GFF3
+
+# Command: maker -RM_off|R
+# Argument: -RM_off|R turns off all repeat masking options
+# Argument: -fix_nucleotides not recognized
+
+
+
+# [Detailed Installation Notes]
+
+# Install and Configure Perl
+# perl -v to confirm perl is installed (5.8.0+ required)
+
+# perl -MCPAN -e shell to access CPAN shell
+# installing modules (may require sudo)
+# PERMISSION ISSUES HERE
+# install DBI
+# install DBD::SQLite
+# install Proc::ProcessTable
+# install threads
+# install IO::All
+# install IO::Prompt
+# install File::Which
+# install Perl::Unsafe::Signals
+# install Bit::Vector
+# install Inline::C
+# install PerlIO::gzip
+
+# Installing Bioperl with CPAN
+# perl -MCPAN -e shell
+# install Bundle::CPAN
+# install Module::Build
+# install Bundle::BioPerl
+
+# Installing NCBI-BLAST (Wublast alternative if we have existing copy (no longer freely available))
+# Present in server
+```
+
+* structure annotation (possible tool: PASA)
+
+
