@@ -92,6 +92,7 @@ output:
 # ...16) get fasta file corresponding to the annotation bed file using getfasta utility from BED tools 
 ```
 
+<<<<<<< HEAD
 * Structure Annotation (possible tool: MAKERv2.31.9)
 ```{r}
 # 1) Install and Configure MAKER
@@ -270,8 +271,404 @@ Ae_unmapped.blastx.trinity <- read.csv("~/assembly_parent/De_novo/filtering/Ae_u
 * get size info for all transcript, used in chimera remove in Uchime 
 
 # structure annotation (possible tool: maker2)
+=======
+* De-novo Assembly
 ```{r}
+# 1) In directory Users/calenbadger/De_novo_Assembly
+# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip)
 
+# 2) Unzipping and Concatenating
+# In directory Users/calenbadger/De_novo_Assembly/Trimmed_Fastqs
+# zcat 05*1.p* 5_1.p* 6_1.p* 8_1.p* Ae*1.p* | gzip -c > Ae_Trimmed_1.paired.fq.gz
+# zcat 05*2.p* 5_2.p* 6_2.p* 8_2.p* Ae*2.p* | gzip -c > Ae_Trimmed_2.paired.fq.gz
+# zcat 1_1.p* 2_1.p* 3_1.p* 4_1.p* All1*1.p* | gzip -c > Ol_Trimmed_1.paired.fq.gz 
+# zcat 1_2.p* 2_2.p* 3_2.p* 4_2.p* All1*2.p* | gzip -c > Ol_Trimmed_2.paired.fq.gz
+
+# 3) Run Abundance Script for Ae and Ol
+# In /calenbadger/De_novo_Assembly
+# Option 1: kallisto (Ae)
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/align_and_estimate_abundance.pl \
+# --transcripts ./Da_Ae_Trinity.fasta.gz \
+# --seqType fq \
+# --left ./Trimmed_Fastqs/Ae_Trimmed_1.paired.fq.gz \
+# --right ./Trimmed_Fastqs/Ae_Trimmed_2.paired.fq.gz \
+# --est_method kallisto (RSEM|eXpress|kallisto|salmon) \
+# --output_dir ~/De_novo_Assembly/Ae_alignment_output \
+# --SS_lib_type FR (RF|FR) \
+# --thread_count 4 \
+# --trinity_mode (generates gene_trans_map and uses it)(gene_trans_map contains components, genes, and isoforms) \
+# --prep_reference
+# --output_prefix kallisto (default --est_method setting)
+
+# Kallisto (Ol)
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/align_and_estimate_abundance.pl \
+# --transcripts ./Da_Ol_1_Trinity.fasta.gz \
+# --seqType fq \
+# --left ./Trimmed_Fastqs/Ol_Trimmed_1.paired.fq.gz \
+# --right ./Trimmed_Fastqs/Ol_Trimmed_2.paired.fq.gz \
+# --est_method kallisto (RSEM|eXpress|kallisto|salmon) \
+# --output_dir ~/De_novo_Assembly/Ol_alignment_output \
+# --SS_lib_type FR (RF|FR) \
+# --thread_count 4 \
+# --trinity_mode (generates gene_trans_map and uses it)(gene_trans_map contains components, genes, and isoforms) \
+# --prep_reference
+# --output_prefix kallisto (default --est_method setting)
+
+# Option 2: RSEM
+# perl /usr/local/bin/Trinity/util/align_and_estimate_abundance.pl \
+# --transcripts <string> \
+# --seqType fq \
+# --left <string> \
+# --right <string> \
+# --est_method RSEM (RSEM|eXpress|kallisto|salmon) \
+# --output_dir ~/De_novo_Assembly/alignment_output \
+# --aln_method <string> (bowtie|bowtie2|path_to_bam_file)
+# --SS_lib_type FR (RF|FR) \
+# --thread_count 4 \
+# --trinity_mode (generates gene_trans_map and uses it) \
+# --output_prefix RSEM (default --est_method setting)
+
+# 4) Build Gene Expression Matrices
+# In De_novo_Assembly
+# For Both Samples Together
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/abundance_estimates_to_matrix.pl \
+# --est_method kallisto \
+# --out_prefix Ae_Ol_counts \
+# --name_sample_by_basedir \
+# Ae_alignment_output/abundance.tsv \
+# Ol_alignment_output/abundance.tsv
+
+# For Ae Only
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/abundance_estimates_to_matrix.pl --est_method kallisto --out_prefix Ae_counts ~/De_novo_Assembly/Ae_alignment_output/abundance.tsv
+
+# For Ol Only
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/abundance_estimates_to_matrix.pl --est_method kallisto --out_prefix Ol_counts ~/De_novo_Assembly/Ol_alignment_output/abundance.tsv
+
+# 5) Statistics Using contig_ExN50_statistic.pl
+# No Command for Combined (Requires Trinity.fasta equivalent, combining both Ae/Ol fasta files)
+# In ~/De_novo_Assembly/
+# Ae Statistics
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/misc/contig_ExN50_statistic.pl Ae_counts.TPM.not_cross_norm Da_Ae_Trinity.fasta | tee Ae_ExN50.stats
+# Ol Statistics
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/misc/contig_ExN50_statistic.pl Ol_counts.TPM.not_cross_norm Da_Ol_1_Trinity.fasta | tee Ol_ExN50.stats
+
+# 6) Filtering Based on Expression TPM
+# Moving data into R
+# Ae_abundance <- read.delim("../De_novo_Assembly/Ae_alignment_output/abundance.tsv")
+# Ol_abundance <- read.delim("../De_novo_Assembly/Ol_alignment_output/abundance.tsv")
+
+# abundance.tsv files subsetted to only include tpm expression values over 1
+# Ae_exptemp <- Ae_abundance[Ae_abundance$tpm >= 1,]
+# Ae_exp <- Ae_exptemp[Ae_exptemp$length <= 8000,]
+# Ol_exptemp <- Ol_abundance[Ol_abundance$tpm >= 1,]
+# Ol_exp <- Ol_exptemp[Ol_exptemp$length <= 8000,]
+
+# Extracting a list of target IDs
+# Ae_exp_ids <- data.frame(Ae_exp$target_id)
+# Ol_exp_ids <- data.frame(Ol_exp$target_id)
+
+# Moving ID lists to a file
+# write.table(Ae_exp_ids,file="../De_novo_Assembly/Ae_exp_ids",quote=FALSE,row.names=FALSE)
+# write.table(Ol_exp_ids,file="../De_novo_Assembly/Ol_exp_ids",quote=FALSE,row.names=FALSE)
+
+# Running list of expression subset against our original fasta files to filter the contigs
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ae_exp_ids Da_Ae_Trinity.fasta > Da_Trinity_Exp.fasta
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ol_exp_ids Da_Ol_1_Trinity.fasta > Da_Ol_Trinity_Exp.fasta
+
+# 7) ORF Extraction Pipeline
+# (Complete and Partial Long ORFs, 200aa+)
+# PATH=$PATH:~/bin/TransDecoder-3.0.1/
+# TransDecoder.LongOrfs -t Da_Ae_Trinity_Exp.fasta
+# TransDecoder.LongOrfs -t Da_Ol_Trinity_Exp.fasta
+
+# 8) Blastn (Nucleotide Identity)
+# In De_novo_Assembly Directory
+
+# Brassica Rapa CDS File
+# wget http://www.genoscope.cns.fr/brassicanapus/data/Brassica_napus.annotation_v5.cds.fa.gz
+# gzip -c Brassica_napus.annotation_v5.cds.fa.gz > Brassica_napus.annotation_v5.cds.fa
+
+# Generating Database from CDS File
+# makeblastdb -in ./Brassica_napus.annotation_v5.cds.fa -dbtype ‘nucl’ -input_type 'fasta' -out NapusNuc.db -title NapusNuc
+
+# Running Blastn
+# For Ae
+# blastn -query ./Ae_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ae_NapusNuc.out
+# For Ol
+# blastn -query ./Ol_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ol_NapusNuc.out
+
+# Filtering Percent ID >= 95%
+# Ae_Blast <- read.delim("../De_novo_Assembly/Da_Ae_NapusNuc.out",header=FALSE)
+# Ol_Blast <- read.delim("../De_novo_Assembly/Da_Ol_NapusNuc.out",header=FALSE)
+# colnames(Ae_Blast) <- c("qseqid","sseqid","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore")
+# colnames(Ol_Blast) <- c("qseqid","sseqid","pident","length","mismatch","gapopen","qstart","qend","sstart","send","evalue","bitscore")
+# Ae_Blast_PI <- Ae_Blast[Ae_Blast$pident>=95,]
+# Ol_Blast_PI <- Ol_Blast[Ol_Blast$pident>=95,]
+# rownames(Ae_Blast_PI) <- NULL
+# rownames(Ol_Blast_PI) <- NULL
+# write.table(Ae_Blast_PI,file="../De_novo_Assembly/Ae_Blast_PI95",quote=FALSE,row.names=FALSE)
+# write.table(Ol_Blast_PI,file="../De_novo_Assembly/Ol_Blast_PI95",quote=FALSE,row.names=FALSE)
+
+# Removing IDs with Over 95% Identity
+# IDs for the Files were Extracted via Command Line
+# Ae_orfs_ID <- read.delim("../De_novo_Assembly/Da_Ae_Trinity_Exp.fasta.transdecoder_dir/longest_orfs.cds_ID",header=FALSE,col.names="ID")
+# Ol_orfs_ID <- read.delim("../De_novo_Assembly/Da_Ol_Trinity_Exp.fasta.transdecoder_dir/longest_orfs.cds_ID",header=FALSE,col.names="ID")
+# Ae_95_ID <- read.delim("../De_novo_Assembly/Ae_Blast_PI95_ID",header=FALSE,col.names="ID")
+# Ol_95_ID <- read.delim("../De_novo_Assembly/Ol_Blast_PI95_ID",header=FALSE,col.names="ID")
+
+# Package Installs
+# install.packages("magrittr")
+# library(magrittr)
+# install.packages("dplyr") #might already be present
+# library(dplyr)
+
+# Anti_Join to Remove IDs that have a match between Orf and Blast IDs
+# Ae_orfs_95 <- Ae_orfs_ID %>%
+  # anti_join(Ae_95_ID, by = "ID")
+# Ol_orfs_95 <- Ol_orfs_ID %>%
+  # anti_join(Ol_95_ID, by = "ID")
+
+# write.table(Ae_orfs_95,file="../De_novo_Assembly/Ae_orfs_95_ID",quote=FALSE,row.names=FALSE)
+# write.table(Ol_orfs_95,file="../De_novo_Assembly/Ol_orfs_95_ID",quote=FALSE,row.names=FALSE)
+
+# Blast Identity Filtering
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ae_orfs_95_ID Ae_Transdecoder/longest_orfs.cds > ./Ae_Transdecoder/orfs_novel.cds
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ol_orfs_95_ID Ol_Transdecoder/longest_orfs.cds > ./Ol_Transdecoder/orfs_novel.cds
+
+# 9) BWA-MEM Alignment
+# bwa index Brassica_napus_v4.1.chromosomes.fa
+# bwa mem Brassica_napus_v4.1.chromosomes.fa ../Ae_Transdecoder/orfs_novel.cds > Ae_bwa_mem.sam
+# bwa mem Brassica_napus_v4.1.chromosomes.fa ../Ol_Transdecoder/orfs_novel.cds > Ol_bwa_mem.sam
+# All Da Ae and Da Ol genes had at least 1 alignment
+
+# 10) Cap3 Redundancy Filtering
+# ./run_cap3_cds.sh
+# 
+# 11) Blastx on Cluster
+
+# 12) Generating Unmapped Cds Files
+# From ~/De_novo_Assembly/Bwa_Mem
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/Bwa_Mem/Ae_napus_unmapped_ID ../Ae_Transdecoder/orfs_novel.cds > ./Ae_napus_unmapped.cds
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/Bwa_Mem/Ol_napus_unmapped_ID ../Ol_Transdecoder/orfs_novel.cds > ./Ol_napus_unmapped.cds
+
+# 13) Running Blastx Against NR database for unmapped cds
+# blastx -query ./Ae_napus_unmapped.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out ./Ae_unmapped.blastx.out
+
+# blastx -query ./Ol_napus_unmapped.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out ./Ol_unmapped.blastx.out
+
+# 14) Producing Final List of Genes
+# Removed 1 nonplant unmapped (bwa) Ol gene
+# Removed genes with no blastx hit (Ae ~100 genes, Ol ~66 genes) (Actual number of genes removed may be lower because some of the genes with blastx hits were duplicates)
+# Used our list of remaining genes from the longest_orf.cds file to extract the genes and their sequence from our original expression filtered assembly
+
+# 15) Chimera Filtering (Attempted)
+# Appended TPM abundance to our novel genes
+# Used Vsearch - only turned up 0% chimera results
+# vsearch --uchime_denovo Ae_napus_like_gene_ID_Trinity.fa --chimeras Ae_chimera.out.fa --nonchimeras Ae_nonchimera.out.fa
+
+```
+
+* Reference and denovo Assembly
+```{r}
+# 1) 9 Genes in Reference assembly had 2 copies - Removed the extra copies
+
+# 2) Combined denovo and Reference Based Novel Gene Assemblies
+# cat Ae_napus_like_gene_ID_Trinity.fa Ae_ref_for_annotation_final.fa > Ae_combined_genes.fa
+# cat Ol_napus_like_gene_ID_Trinity.fa Ol_ref_for_annotation_final.fa > Ol_combined_genes.fa
+
+# 3) Cap3 on Combined Assemblies (Ae and Ol separate)
+# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/cap3_denovo_reference
+# ./run_cap3.sh (runs Cap3 for Ae and Ol)
+
+# 4) Combined singlets and contigs for Ae and Ol
+# cat Ae_combined_genes.fa.cap.contigs Ae_combined_genes.fa.cap.singlets > Ae_combined_genes.fa.cap.singlets_contigs
+# cat Ol_combined_genes.fa.cap.contigs Ol_combined_genes.fa.cap.singlets > Ol_combined_genes.fa.cap.singlets_contigs
+
+# 5) BUSCO Transcriptome Completeness
+# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/busco
+# for i in $files; do mkdir ${i}_dir; cd ${i}_dir; python3 /usr/local/stow/busco_python3/scripts/run_BUSCO.py -i ../${i} -o busco -l /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/busco/lineages/embryophyta_odb9 -m transcriptome -c 10; cd ..; done
+# Running 5 Files in $files - Files_dir:
+# Brassica_napus.annotation_v5.cds.fa_dir (Reference)
+# C: 97.3%
+# Ae_Ol_novel_combined_genes.fa.cap.singlets_contigs_dir (Novel Genes)
+# C: 7.5%
+# Brassica_napus.annotation.novel.cds.fa_dir (Reference + Novel Genes)
+# C: 97.7%
+# Ae_combined_genes.fa.cap.singlets_contigs_dir [Not used]
+# C: 4.7%
+# Ol_combined_genes.fa.cap.singlets_contigs_dir [Not used]
+# C: 5.7%
+# Results combined into one file
+# cat *_dir/run_busco/short_summary_busco.txt | grep -v "version" | grep -v "lineage" | grep -v "reproduce" | grep -v "mode" > busco_results.txt
+# Completion increased with from 97.3% to 97.7% with the addition of the novel Ae and Ol genes
+
+```
+
+
+* Structural and Functional Annotation (Dammit)
+```{r}
+# 1) Dammit Installation Instructions https://angus.readthedocs.io/en/2017/dammit_annotation.html#
+
+# 2) Entering py3 instance environment (use this for dammit annotation)
+# . ~/py3/bin/activate
+
+# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/dammit/dammit_run
+# dammit databases -h
+# Options: Fungi, eukaryota, metazoa
+# dammit databases --install --database-dir fungi.db --busco-group fungi
+# 3) Located B.napus Protein Database
+# Files for Dammit run located in ./Ae_combined_genes.fa.cap.singlets_contigs.dammit and ./Ol_combined_genes.fa.cap.singlets_contigs.dammit
+# 4) Running Dammit
+# dammit annotate Ae_combined_genes.fa.cap.singlets_contigs --busco-group fungi --user-databases Brassica_napus.annotation_v5.pep.fa --n_threads 8
+# dammit annotate Ol_combined_genes.fa.cap.singlets_contigs --busco-group fungi --user-databases Brassica_napus.annotation_v5.pep.fa --n_threads 8
+
+# 5) Results
+# Most Useful Files: Located in /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/dammit/dammit_results
+# Ae_combined.dammit.fasta
+# Ae_combined.dammit.gff3
+# Ae_combined.dammit.stats.json
+# Ol_combined.dammit.fasta
+# Ol_combined.dammit.gff3
+# Ol_combined.dammit.stats.json
+```
+
+* Visualization of Intermediates
+```{r}
+# 1) Length Data (Reference + Before/during filtering steps)
+# Outputting Length for Historical Bnapus Genome
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/misc/fasta_seq_length.pl Brassica_napus.annotation_v5.gff3.cds.fa > Brassica_napus_length.txt
+
+# Moving Length Data into R
+# Bnapus_length <- read.table("../De_novo_Assembly/Brassica_napus_length.txt",header=TRUE,col.names=c("target_id","length"))
+
+# 2) Length Plots
+# library(ggplot2)
+
+# Sample Plots
+# Bnapus_sample <- Bnapus_length[sample(nrow(Bnapus_length), 2000), ]
+# Bnapus_sample_gg <- ggplot(data=Bnapus_sample,aes(x=length)) + geom_histogram()
+# Ae_sample <- Ae_exp[sample(nrow(Ae_exp), 2000), ]
+# Ae_sample_gg <- ggplot(data=Ae_sample,aes(x=length)) + geom_histogram()
+# Ol_sample <- Ol_exp[sample(nrow(Ol_exp), 2000), ]
+# Ol_sample_gg <- ggplot(data=Ol_sample,aes(x=length)) + geom_histogram()
+
+# 3) Full Plots
+# Bnapus_length_gg <- ggplot(data=Bnapus_length,aes(x=length)) + geom_histogram()
+# Ae_length_gg <- ggplot(data=Ae_exp,aes(x=length)) + geom_histogram()
+# Ol_length_gg <- ggplot(data=Ol_exp,aes(x=length)) + geom_histogram()
+# 9) Length Distributions
+# perl /usr/local/stow/trinityrnaseq-2.2.0/util/misc/fasta_seq_length.pl Brassica_napus.annotation_v5.gff3.cds.fa > Brassica_napus_length.txt
+```
+
+* Functional (GO) Annotation (tool: interproscan)
+```{r}
+# 1) Downloading and Extracting
+# wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.25-64.0/interproscan-5.25-64.0-64-bit.tar.gz
+# wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/5.25-64.0/interproscan-5.25-64.0-64-bit.tar.gz.md5
+# Check to Confirm Download:
+# md5sum -c interproscan-5.25-64.0-64-bit.tar.gz.md5
+# tar -pxvzf interproscan-5.25-64.0-*-bit.tar.gz
+
+# 2) Downloading Panther
+# cd interproscan/data/
+# wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-11.1.tar.gz
+# wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-11.1.tar.gz.md5
+# Check to Confirm Download:
+# md5sum -c panther-data-11.1.tar.gz.md5
+# tar -pxvzf panther-data-11.1.tar.gz
+
+# 3) Running Interproscan
+# Da Ae
+# ./interproscan.sh -dp -goterms -t n -d /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/interproscan/interproscan_results/Ae_novel -i /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/dammit/dammit_results/Ae_combined.dammit.fasta
+# Da Ol
+# ./interproscan.sh -dp -goterms -t n -d /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/interproscan/interproscan_results/Ol_novel -i /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/dammit/dammit_results/Ol_combined.dammit.fasta
+```
+
+
+* Old MAKERv2.31.9 Notes [Not used]
+>>>>>>> Calen
+```{r}
+# 1) Install and Configure MAKER
+# wget http://yandell.topaz.genetics.utah.edu/cgi-bin/maker_license.cgi
+
+# 2) Easy Installation
+# tar -xvzf maker-2.31.9.tgz
+# In ~/bin/maker/src
+# perl Build.PL
+# ./Build install
+# ./Build installdeps (for missing PERL dependencies, requires root permission)
+# ./Build installexes (for missing external programs, requires root permission)
+
+# 3) Separate Directories (for Geno)
+# In ~/bin/maker
+# mkdir maker.ae
+# mkdir maker.ol
+
+# 4) Creating ctl Files
+# maker -CTL 
+# creates three control files (run this once in maker.ae and maker.ol)
+# Edit with Nano (is there a way to automate this?)
+# maker_exe.ctl contains path information for executables
+# maker_bopts.ctl contains filtering stats for BLAST/Exonerate
+# maker_opts.ctl contains location of input genome file
+
+# 5) Configuring ctl Files
+# Ae Genotype
+# maker_exe.ctl 
+
+# maker_bopts.ctl 
+
+# maker_opts.ctl 
+# genome=../../../../ruijuanli/Reference/B.napus/Brassica_napus_v4.1.chromosomes.fa #genome sequence (fasta file or fasta embedded in GFF3 file)
+# est=../../../../ruijuanli/assembly_parent/cap3/Ae.u.fa.cap.contigs_singlets
+# protein= #prot seq fasta (multiple organisms?)
+# protein_gff= #aligned prot homology from external GFF3
+
+# Ol Genotype
+# maker_exe.ctl
+
+# maker_bopts.ctl
+
+# maker_opts.ctl
+# genome= ../../../../ruijuanli/Reference/B.napus/Brassica_napus_v4.1.chromosomes.fa #genome sequence (fasta file or fasta embedded in GFF3 file)
+# est=../../../../ruijuanli/assembly_parent/cap3/Ol.u.fa.cap.contigs_singlets
+# protein= #prot seq fasta (multiple organisms?)
+# protein_gff= #aligned prot homology from external GFF3
+
+# Command: maker -RM_off|R
+# Argument: -RM_off|R turns off all repeat masking options
+# Argument: -fix_nucleotides not recognized
+
+
+
+# [Detailed Installation Notes]
+
+# Install and Configure Perl
+# perl -v to confirm perl is installed (5.8.0+ required)
+
+# perl -MCPAN -e shell to access CPAN shell
+# installing modules (may require sudo)
+# PERMISSION ISSUES HERE
+# install DBI
+# install DBD::SQLite
+# install Proc::ProcessTable
+# install threads
+# install IO::All
+# install IO::Prompt
+# install File::Which
+# install Perl::Unsafe::Signals
+# install Bit::Vector
+# install Inline::C
+# install PerlIO::gzip
+
+# Installing Bioperl with CPAN
+# perl -MCPAN -e shell
+# install Bundle::CPAN
+# install Module::Build
+# install Bundle::BioPerl
+
+# Installing NCBI-BLAST (Wublast alternative if we have existing copy (no longer freely available))
+# Present in server
 ```
 
 # functional annotation (possible tool: Blast2GO)
