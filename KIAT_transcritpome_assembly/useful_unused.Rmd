@@ -21,6 +21,23 @@ output: html_document
 # ...16) get fasta file corresponding to the annotation bed file using getfasta utility from BED tools 
 ``` 
 
+### abundance check of de-novo assembled genes based on reads mapping to the assembly (we used kallisto, here is RSEM way to do it possibily)
+```{r}
+# Option 2: RSEM 
+# perl /usr/local/bin/Trinity/util/align_and_estimate_abundance.pl \
+# --transcripts <string> \
+# --seqType fq \
+# --left <string> \
+# --right <string> \
+# --est_method RSEM (RSEM|eXpress|kallisto|salmon) \
+# --output_dir ~/De_novo_Assembly/alignment_output \
+# --aln_method <string> (bowtie|bowtie2|path_to_bam_file)
+# --SS_lib_type FR (RF|FR) \
+# --thread_count 4 \
+# --trinity_mode (generates gene_trans_map and uses it) \
+# --output_prefix RSEM (default --est_method setting)
+```
+
 * Structure Annotation (possible tool: MAKERv2.31.9) From Calen 
 ```{r}
 # 1) Install and Configure MAKER
