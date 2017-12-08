@@ -261,11 +261,16 @@ output:
 
 * Reference and denovo Assembly
 ```{r}
-# 1) 9 Genes in Reference assembly had 2 copies - Removed the extra copies
+# 1) Duplicate Removal # 9 Genes in Da-Ae ref fasta had 2 copies
+# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/cap3_denovo_reference
+# awk 'BEGIN{RS=">"}NR>1{sub("\n","\t"); gsub("\n",""); print RS$0}' Ae_ref_for_annotation.fa > Ae_ref_for_annotation.tab
+# cat Ae_ref_for_annotation.tab | grep -v "ne=XLOC_091616" | sort | uniq > Ae_ref_for_annotation_final.tab
+# cat Ae_ref_for_annotation_final.tab | awk -F '\t' '{printf("%s\n%s\n",$1,$2);}' > Ae_ref_for_annotation_final.fa
+
 
 # 2) Combined denovo and Reference Based Novel Gene Assemblies
 # cat Ae_napus_like_gene_ID_Trinity.fa Ae_ref_for_annotation_final.fa > Ae_combined_genes.fa
-# cat Ol_napus_like_gene_ID_Trinity.fa Ol_ref_for_annotation_final.fa > Ol_combined_genes.fa
+# cat Ol_napus_like_gene_ID_Trinity.fa Ol_ref_for_annotation.fa > Ol_combined_genes.fa
 
 # 3) Cap3 on Combined Assemblies (Ae and Ol separate)
 # In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/cap3_denovo_reference
