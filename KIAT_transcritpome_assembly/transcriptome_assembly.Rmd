@@ -78,24 +78,20 @@ output:
 # 10) multiple ORF were produced for each transcript, the number of transcripts with ORF identified are: 
 # Da-Ae (2311) & Da-Ol-1 (2427) : cat longest_orfs.pep | grep ">" | sed 's/:/\t/g' | awk '{print $2}' | sort | uniq | wc -l 
 
-# To do: 
-# ...11) among the multiple ORFs, which one to use for annotation? Upendra decided to use the one with the max number of significant hits to NCBI nr database. 
+# 11) the number of novel genes which can be annotated 
+  # cat longest_orfs.pep | grep ">" | sed 's/:/\t/g' | awk '{print $2}' | sort | uniq | wc -l
+  # for Da-Ae 2311; for Da-Ol-1 2427 
 
-# ...12) map transctipts to B.napus genome sequence using BWA-MEM, mapped transcripts VS unmapped transcritps (because these transcritps were assembled from mapped reads, they should still be able to map back the reference genome)
-
-# ...13) convert mapped transcripts (bam/sam format) to bed file using (bamtobed tool)
-
-# ...14) join multiple exons from each transcript in the bed file (custom script)
-
-# ...15) select the best isoform for each transcript based on length, the longest will be retained. (custom script)
-
-# ...16) get fasta file corresponding to the annotation bed file using getfasta utility from BED tools 
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/assembly_parent/transdecoder/after_cap3/Ol.u.fa.cap.contigs_singlets.transdecoder_dir/for_annotation_ID Ol.u.fa.cap.contigs_singlets > Ol_ref_for_annotation.fa  
+  
+# /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/assembly_parent/reference_based_for_annotation/Ae_ref_for_annotation_final.fa  & 
+# /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/assembly_parent/reference_based_for_annotation/Ol_ref_for_annotation.fa  
 ```
 
 * De-novo Assembly
 ```{r}
 # 1) In directory Users/calenbadger/De_novo_Assembly
-# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip)
+# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip) 
 
 # 2) Unzipping and Concatenating
 # In directory Users/calenbadger/De_novo_Assembly/Trimmed_Fastqs
@@ -549,6 +545,7 @@ Ae.GOseq.Bn.ORA<-function(genelist,padjust=0.05,ontology="BP") { # return GO enr
 }
 
 ```
+
 ```{r}
 ### Da-Ol function for BnRNAseq 
 
