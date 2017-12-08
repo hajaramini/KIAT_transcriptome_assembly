@@ -90,8 +90,13 @@ output:
 
 * De-novo Assembly
 ```{r}
+<<<<<<< HEAD
 # 1) In directory Users/calenbadger/De_novo_Assembly
 # Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip) 
+=======
+# 1) In directory Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly
+# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip)
+>>>>>>> 5dff38a549183772010ffe93f5f394b7160bbcb0
 
 # 2) Unzipping and Concatenating
 # In directory Users/calenbadger/De_novo_Assembly/Trimmed_Fastqs
@@ -101,7 +106,7 @@ output:
 # zcat 1_2.p* 2_2.p* 3_2.p* 4_2.p* All1*2.p* | gzip -c > Ol_Trimmed_2.paired.fq.gz
 
 # 3) Run Abundance Script for Ae and Ol
-# In /calenbadger/De_novo_Assembly
+# In /calenbadger/assembly_parent/B.napus/De_novo_Assembly
 # Option 1: kallisto (Ae)
 # perl /usr/local/stow/trinityrnaseq-2.2.0/util/align_and_estimate_abundance.pl \
 # --transcripts ./Da_Ae_Trinity.fasta.gz \
@@ -201,9 +206,9 @@ output:
 
 # Running Blastn against Brassica Napus CDS
 # For Ae
-# blastn -query ./Ae_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ae_NapusNuc.out
+# blastn -query ./Ae_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ae_NapusNuc.out
 # For Ol
-# blastn -query ./Ol_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ol_NapusNuc.out
+# blastn -query ./Ol_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ol_NapusNuc.out
 
 # Filtering Percent ID >= 95%
 # Ae_Blast <- read.delim("../De_novo_Assembly/Da_Ae_NapusNuc.out",header=FALSE)
@@ -255,8 +260,8 @@ output:
 
 # 11) Generating Unmapped Cds Files
 # From ~/De_novo_Assembly/Bwa_Mem
-# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/Bwa_Mem/Ae_napus_unmapped_ID ../Ae_Transdecoder/orfs_novel.cds > ./Ae_napus_unmapped.cds
-# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/De_novo_Assembly/Bwa_Mem/Ol_napus_unmapped_ID ../Ol_Transdecoder/orfs_novel.cds > ./Ol_napus_unmapped.cds
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/Bwa_Mem/Ae_napus_unmapped_ID ../Ae_Transdecoder/orfs_novel.cds > ./Ae_napus_unmapped.cds
+# perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/Bwa_Mem/Ol_napus_unmapped_ID ../Ol_Transdecoder/orfs_novel.cds > ./Ol_napus_unmapped.cds
 
 # 12) Running Blastx Against NR database for unmapped cds
 # blastx -query ./Ae_napus_unmapped.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out ./Ae_unmapped.blastx.out
@@ -284,7 +289,7 @@ output:
 # cat Ol_napus_like_gene_ID_Trinity.fa Ol_ref_for_annotation_final.fa > Ol_combined_genes.fa
 
 # 3) Cap3 on Combined Assemblies (Ae and Ol separate)
-# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/cap3_denovo_reference
+# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/cap3_denovo_reference
 # ./run_cap3.sh (runs Cap3 for Ae and Ol)
 
 # 4) Combined singlets and contigs for Ae and Ol
@@ -330,7 +335,7 @@ output:
 # dammit annotate Ol_combined_genes.fa.cap.singlets_contigs --busco-group fungi --user-databases Brassica_napus.annotation_v5.pep.fa --n_threads 8
 
 # 5) Results
-# Most Useful Files: Located in /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/dammit/dammit_results
+# Most Useful Files: Located in /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/dammit/dammit_results
 # Ae_combined.dammit.fasta
 # Ae_combined.dammit.gff3
 # Ae_combined.dammit.stats.json
