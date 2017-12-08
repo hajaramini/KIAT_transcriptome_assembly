@@ -90,13 +90,8 @@ output:
 
 * De-novo Assembly
 ```{r}
-<<<<<<< HEAD
-# 1) In directory Users/calenbadger/De_novo_Assembly
-# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip) 
-=======
 # 1) In directory Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly
-# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip)
->>>>>>> 5dff38a549183772010ffe93f5f394b7160bbcb0
+# Run ./trimming.sh in a screen # (Trimmomatic + Illuminaclip) 
 
 # 2) Unzipping and Concatenating
 # In directory Users/calenbadger/De_novo_Assembly/Trimmed_Fastqs
@@ -134,20 +129,6 @@ output:
 # --trinity_mode (generates gene_trans_map and uses it)(gene_trans_map contains components, genes, and isoforms) \
 # --prep_reference
 # --output_prefix kallisto (default --est_method setting)
-
-# Option 2: RSEM
-# perl /usr/local/bin/Trinity/util/align_and_estimate_abundance.pl \
-# --transcripts <string> \
-# --seqType fq \
-# --left <string> \
-# --right <string> \
-# --est_method RSEM (RSEM|eXpress|kallisto|salmon) \
-# --output_dir ~/De_novo_Assembly/alignment_output \
-# --aln_method <string> (bowtie|bowtie2|path_to_bam_file)
-# --SS_lib_type FR (RF|FR) \
-# --thread_count 4 \
-# --trinity_mode (generates gene_trans_map and uses it) \
-# --output_prefix RSEM (default --est_method setting)
 
 # 4) Build Gene Expression Matrices
 # In De_novo_Assembly
@@ -188,16 +169,16 @@ output:
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ae_exp_ids Da_Ae_Trinity.fasta > Da_Trinity_Exp.fasta
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ol_exp_ids Da_Ol_1_Trinity.fasta > Da_Ol_Trinity_Exp.fasta
 
-# 6) ORF Extraction Pipeline
-# (Complete and Partial Long ORFs, 200aa+)
+# 6) ORF Extraction Pipeline # keep contigs with ORF 
+# (Complete and Partial Long ORFs, 200aa+) 
 # PATH=$PATH:~/bin/TransDecoder-3.0.1/
 # TransDecoder.LongOrfs -t Da_Ae_Trinity_Exp.fasta
 # TransDecoder.LongOrfs -t Da_Ol_Trinity_Exp.fasta
 
-# 7) Blastn (Nucleotide Identity)
+# 7) Blastn (Nucleotide Identity) # keep contigs which are not highly identical to the ref CDS 
 # In De_novo_Assembly Directory
 
-# Brassica Rapa CDS File
+# Brassica napus CDS File 
 # wget http://www.genoscope.cns.fr/brassicanapus/data/Brassica_napus.annotation_v5.cds.fa.gz
 # gzip -c Brassica_napus.annotation_v5.cds.fa.gz > Brassica_napus.annotation_v5.cds.fa
 
@@ -208,7 +189,7 @@ output:
 # For Ae
 # blastn -query ./Ae_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ae_NapusNuc.out
 # For Ol
-# blastn -query ./Ol_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ol_NapusNuc.out
+# blastn -query ./Ol_Transdecoder/longest_orfs.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/NapusNuc.db -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out Da_Ol_NapusNuc.out 
 
 # Filtering Percent ID >= 95%
 # Ae_Blast <- read.delim("../De_novo_Assembly/Da_Ae_NapusNuc.out",header=FALSE)
@@ -247,26 +228,25 @@ output:
 # Blast Identity Filtering
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ae_orfs_95_ID Ae_Transdecoder/longest_orfs.cds > ./Ae_Transdecoder/orfs_novel.cds
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' Ol_orfs_95_ID Ol_Transdecoder/longest_orfs.cds > ./Ol_Transdecoder/orfs_novel.cds
+### these orfs_novel.cds are the sequences which have ORF and novel compared to ref B.napus CDS, they are here: /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/Ae_Transdecoder/orfs_novel.cds & /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/Ol_Transdecoder/orfs_novel.cds 
 
-# 8) BWA-MEM Alignment
+# 8) BWA-MEM Alignment ### to see whether these genes are bona fide B.napus genes and this can tell us whether contigs map to multiple position in the ref genome --> useful for removing chimera. 
 # bwa index Brassica_napus_v4.1.chromosomes.fa
 # bwa mem Brassica_napus_v4.1.chromosomes.fa ../Ae_Transdecoder/orfs_novel.cds > Ae_bwa_mem.sam
 # bwa mem Brassica_napus_v4.1.chromosomes.fa ../Ol_Transdecoder/orfs_novel.cds > Ol_bwa_mem.sam
 
 # 9) Cap3 Redundancy Filtering
-# ./run_cap3_cds.sh
-# 
-# 10) Blastx on Cluster
+# ./run_cap3_cds.sh 
 
-# 11) Generating Unmapped Cds Files
+# 11) Generating Unmapped Cds Files (we only want to keep plant gene, for that purpose, blastx can tell us, so if a gene doesn't have a plant hit, it will be removed)
 # From ~/De_novo_Assembly/Bwa_Mem
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/Bwa_Mem/Ae_napus_unmapped_ID ../Ae_Transdecoder/orfs_novel.cds > ./Ae_napus_unmapped.cds
 # perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/De_novo_Assembly/Bwa_Mem/Ol_napus_unmapped_ID ../Ol_Transdecoder/orfs_novel.cds > ./Ol_napus_unmapped.cds
 
-# 12) Running Blastx Against NR database for unmapped cds
+# 12) Running Blastx Against NR database for unmapped cds   
 # blastx -query ./Ae_napus_unmapped.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out ./Ae_unmapped.blastx.out
 
-# blastx -query ./Ol_napus_unmapped.cds -db /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out ./Ol_unmapped.blastx.out
+# blastx -query ./Ol_napus_unmapped.cds -db  /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/ruijuanli/Reference/NCBI/nr/nr -max_target_seqs 1 -outfmt 6 -evalue 1e-6 -num_threads 5 -out ./Ol_unmapped.blastx.out
 
 # 13) Producing Final List of Genes
 # Removed 1 nonplant unmapped (bwa) Ol gene
@@ -276,8 +256,7 @@ output:
 # 14) Chimera Filtering (Attempted)
 # Appended TPM abundance to our novel genes
 # Used Vsearch - only turned up 0% chimera results
-# vsearch --uchime_denovo Ae_napus_like_gene_ID_Trinity.fa --chimeras Ae_chimera.out.fa --nonchimeras Ae_nonchimera.out.fa
-
+# vsearch --uchime_denovo Ae_napus_like_gene_ID_Trinity.fa --chimeras Ae_chimera.out.fa --nonchimeras Ae_nonchimera.out.fa 
 ```
 
 * Reference and denovo Assembly
@@ -297,13 +276,13 @@ output:
 # In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/cap3_denovo_reference
 # ./run_cap3.sh (runs Cap3 for Ae and Ol)
 
-# 4) Combined singlets and contigs for Ae and Ol
+# 4) Combined singlets and contigs for Ae and Ol, singlets and contigs are the results from cap3
 # cat Ae_combined_genes.fa.cap.contigs Ae_combined_genes.fa.cap.singlets > Ae_combined_genes.fa.cap.singlets_contigs
-# cat Ol_combined_genes.fa.cap.contigs Ol_combined_genes.fa.cap.singlets > Ol_combined_genes.fa.cap.singlets_contigs
+# cat Ol_combined_genes.fa.cap.contigs Ol_combined_genes.fa.cap.singlets > Ol_combined_genes.fa.cap.singlets_contigs 
 
-# 5) BUSCO Transcriptome Completeness
+# 5) BUSCO Transcriptome Completeness 
 # In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/busco
-# for i in $files; do mkdir ${i}_dir; cd ${i}_dir; python3 /usr/local/stow/busco_python3/scripts/run_BUSCO.py -i ../${i} -o busco -l /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/busco/lineages/embryophyta_odb9 -m transcriptome -c 10; cd ..; done
+# for i in $files; do mkdir ${i}_dir; cd ${i}_dir; python3 /usr/local/stow/busco_python3/scripts/run_BUSCO.py -i ../${i} -o busco -l /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/busco/lineages/embryophyta_odb9 -m transcriptome -c 10; cd ..; done 
 # Running 5 Files in $files - Files_dir:
 # Brassica_napus.annotation_v5.cds.fa_dir (Reference)
 # C: 97.3%
@@ -317,20 +296,18 @@ output:
 # C: 5.7%
 # Results combined into one file
 # cat *_dir/run_busco/short_summary_busco.txt | grep -v "version" | grep -v "lineage" | grep -v "reproduce" | grep -v "mode" > busco_results.txt
-# Completion increased with from 97.3% to 97.7% with the addition of the novel Ae and Ol genes
-
+# Completion increased with from 97.3% to 97.7% with the addition of the novel Ae and Ol genes 
 ```
 
-
-* Structural and Functional Annotation (Dammit)
+* Structural and Functional Annotation (Dammit) 
 ```{r}
 # 1) Dammit Installation Instructions https://angus.readthedocs.io/en/2017/dammit_annotation.html
 
 # 2) Entering py3 instance environment (use this for dammit annotation)
 # . ~/py3/bin/activate
 
-# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/dammit/dammit_run
-# dammit databases -h
+# In /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/dammit/dammit_run 
+# dammit databases -h 
 # Options: Fungi, eukaryota, metazoa
 # dammit databases --install --database-dir fungi.db --busco-group fungi
 
@@ -360,7 +337,7 @@ output:
 # md5sum -c interproscan-5.26-65.0-64-bit.tar.gz.md5
 # tar -pxvzf interproscan-5.26-65.0-*-bit.tar.gz
 
-# 2) Downloading Panther
+# 2) Downloading Panther # database that interproscan uses for GO annotation, it comes seperately and won't be able to include as a ref database if don't download, there are other databases that interproscan uses and can be included without downloading. 
 # cd interproscan/data/
 # wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-12.0.tar.gz
 # wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/data/panther-data-12.0.tar.gz.md5
@@ -376,10 +353,12 @@ output:
 # Da Ol
 # ./interproscan.sh -dp -goterms -t n -appl panther-12.0,smart-7.1,prints-42.0,pfam-31.0 -d /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/interproscan/interproscan_results/Ol_novel/$i.dir -i /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/interproscan/interproscan-5.26-65.0/Ol_split_dir/$i
 
-# Combined Files
-# cat Ae_combined.plain.fasta_chunk_00000*/Ae_combined.plain.fasta_chunk_00000*.tsv > Ae_interproscan.tsv
+# Combined Files # 
+# cat Ae_combined.plain.fasta_chunk_00000*/Ae_combined.plain.fasta_chunk_00000*.tsv > Ae_interproscan.tsv 
 # cat Ol_combined.plain.fasta_chunk_00000*/Ol_combined.plain.fasta_chunk_00000*.tsv > Ae_interproscan.tsv
-
+# the above are the final result from interproscan: 
+# /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/interproscan/interproscan_results/Ae_novel/
+# /Network/Servers/avalanche.plb.ucdavis.edu/Volumes/Mammoth/Users/calenbadger/assembly_parent/B.napus/interproscan/interproscan_results/Ol_novel/ 
 ```
 
 * Length Distribution Figure
@@ -425,7 +404,6 @@ length.distr$range <- factor(length.distr$range, levels = c("<200","200-500","50
 # cat Ae_denovo_plain.fa.length Ae_ref_plain.fa.length | awk '{print $2}' | sort -n | tail -20 # 9367
 # cat Ol_denovo_plain.fa.length Ol_ref_plain.fa.length | awk '{print $2}' | sort -n | tail -20 # 9426
 ```
-
 
 * GOseq for Brassica Napus Novel Genes
 ```{r}
@@ -675,5 +653,5 @@ Ae.gt_Ol.gt.melt$logPvalue <- -log10(Ae.gt_Ol.gt.melt$value)
 Ae.Ol.heatmap1 <- ggplot(data = Ae.gt_Ol.gt.melt)
 Ae.Ol.heatmap1 <- Ae.Ol.heatmap1 + geom_tile(color = "black", aes(x = factor(variable), y = Term, fill=logPvalue)) + scale_fill_gradient2(low=muted("green"), high=muted("magenta")) 
 Ae.Ol.heatmap1 <- Ae.Ol.heatmap1 + labs(y = "GO Term", x="Genotype", title="B.napus Novel Genes GO Heatmap") 
-Ae.Ol.heatmap1 
+Ae.Ol.heatmap1  
 ```
